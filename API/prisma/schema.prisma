@@ -17,7 +17,7 @@ model User {
   id       String    @id @default(cuid())
   username String    @unique
   password String
-  created  DateTime  @default(now())
+  datetime  DateTime  @default(now())
   Posts    Post[]
   Comments Comment[]
 }

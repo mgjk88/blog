@@ -14,8 +14,10 @@ const parseQueries: middlewareFactory = (fields) => (req, res, next) => {
       return;
     }
 
+    //prepares object to be referenced by orderBy arg in prisma
+    //e.g +username orders usernames in ascending order
+    //-datetime orders datetime in descending order
     let orderByObj: { [key: string]: string } = {};
-
     sort.split(",").forEach((str) => {
       let order = "";
       switch (str[0]) {

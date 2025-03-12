@@ -23,10 +23,10 @@ const readPosts: RequestHandler = async (req, res, next) => {
       },
     });
     if (!posts) {
-      res.status(404).json({ error: "posts not found" });
+      res.status(404).end();
       return;
     }
-    res.status(200).json(JSON.stringify(posts));
+    res.status(200).json();
   } catch (error) {
     next(error);
   }
@@ -53,7 +53,7 @@ const readPost: RequestHandler = async (req, res, next) => {
       },
     });
     if (!post) {
-      res.status(404).json({ error: "post not found" });
+      res.status(404).end();
       return;
     }
     res.status(200).json(post);
@@ -66,7 +66,7 @@ const readPostComments: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
     if (!postId) {
-      res.status(400).json({ error: "bad request" });
+      res.status(400).end();
       return;
     }
     const comments = await prisma.comment.findMany({
@@ -91,10 +91,10 @@ const readPostComments: RequestHandler = async (req, res, next) => {
       },
     });
     if (!comments) {
-      res.status(404).json({ error: "comments not found" });
+      res.status(404);
       return;
     }
-    res.status(200).json(JSON.stringify(comments));
+    res.status(200).json();
   } catch (error) {
     next(error);
   }
@@ -105,7 +105,7 @@ const readPostComment: RequestHandler = async (req, res, next) => {
     const postId = req.params.postId;
     const commentId = req.params.commentId;
     if (!postId || !commentId) {
-      res.status(400).json({ error: "bad request" });
+      res.status(400).end();
       return;
     }
     const comment = await prisma.comment.findUnique({
@@ -118,7 +118,7 @@ const readPostComment: RequestHandler = async (req, res, next) => {
       },
     });
     if (!comment) {
-      res.status(404).json({ error: "comment not found" });
+      res.status(404).end();
       return;
     }
     res.status(200).json(JSON.stringify(comment));
@@ -130,11 +130,11 @@ const readPostComment: RequestHandler = async (req, res, next) => {
 const createPost: RequestHandler = async (req, res, next) => {
   try {
     if (!req.user) {
-      res.status(401).json({ error: "unauthorized" });
+      res.status(401).end();
       return;
     }
     if (!req.body || !req.body.status || !req.body.title || !req.body.content) {
-      res.status(400).json({ error: "bad request" });
+      res.status(400).end();
       return;
     }
     const post = await prisma.post.create({
@@ -154,8 +154,8 @@ const createPost: RequestHandler = async (req, res, next) => {
 const updatePost: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
-    if (!postId || !req.body.title || !req.body.content) {
-      res.status(400).json({ error: "bad request" });
+    if (!postId || !req.body.title || !req.body.status || !req.body.content) {
+      res.status(400).end();
     }
     await prisma.post.update({
       where: {
@@ -163,6 +163,7 @@ const updatePost: RequestHandler = async (req, res, next) => {
       },
       data: {
         title: req.body.title,
+        status: req.body.status,
         content: req.body.content,
         datetime: new Date().toISOString(),
       },
@@ -177,7 +178,7 @@ const deletePost: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
     if (!postId) {
-      res.status(400).json({ error: "bad request" });
+      res.status(400).end();
       return;
     }
     const post = await prisma.post.delete({
@@ -186,7 +187,7 @@ const deletePost: RequestHandler = async (req, res, next) => {
       },
     });
     if (!post) {
-      res.status(404).json({ error: "post not found" });
+      res.status(404).end();
     }
     res.status(204).end();
   } catch (error) {

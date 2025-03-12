@@ -10,7 +10,7 @@ const parseQueries: middlewareFactory = (fields) => (req, res, next) => {
       typeof limit != "string" ||
       typeof offset !== "string"
     ) {
-      res.status(400).json({ error: "bad request" });
+      res.status(400).end();
       return;
     }
 
@@ -28,13 +28,13 @@ const parseQueries: middlewareFactory = (fields) => (req, res, next) => {
           order = "desc";
           break;
         default:
-          res.status(400).json({ error: "bad request" });
+          res.status(400).end();
           return;
       }
       const field = str.slice(1);
 
       if (fields.filter((currField) => field === currField).length === 0) {
-        res.status(400).json({ error: "bad request" });
+        res.status(400).end();
       }
       orderByObj[field] = order;
     });
@@ -44,11 +44,14 @@ const parseQueries: middlewareFactory = (fields) => (req, res, next) => {
     req.body.orderBy = orderByObj;
     next();
   } catch (error) {
-    res.status(500).json({ error: "internal server error" });
+    next(error);
   }
 };
 
 const handleError: ErrorRequestHandler = (err, req, res, next) => {
+  if(err.code === "P2002"){
+    res.status(400).end();
+  }
     console.error(err);
     res.status(500).end();
 }

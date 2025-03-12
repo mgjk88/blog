@@ -1,14 +1,20 @@
-import { RequestHandler } from "express";
+import { RequestHandler, Request } from "express";
 
 type middlewareFactory = (list: string[]) => RequestHandler;
 
-declare global {
+interface UserPayload {
+  id: string
+}
+
+global {
   namespace Express {
     interface User {
-      id: string;
+      id: string
     }
+
     interface Request {
-      user?: User;
+      user?: User
     }
   }
+  
 }

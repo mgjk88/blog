@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import prisma from "../db/pool";
 
-const readPosts: RequestHandler = async (req, res) => {
+const readPosts: RequestHandler = async (req, res, next) => {
   try {
     const posts = await prisma.post.findMany({
       skip: req.body.skip,
@@ -28,11 +28,11 @@ const readPosts: RequestHandler = async (req, res) => {
     }
     res.status(200).json(JSON.stringify(posts));
   } catch (error) {
-    res.status(500).json({ error: "internal server error" });
+    next(error);
   }
 };
 
-const readPost: RequestHandler = async (req, res) => {
+const readPost: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
     const post = await prisma.post.findUnique({
@@ -58,11 +58,11 @@ const readPost: RequestHandler = async (req, res) => {
     }
     res.status(200).json(post);
   } catch (error) {
-    res.status(500).json({ error: "internal server error" });
+    next(error);
   }
 };
 
-const readPostComments: RequestHandler = async (req, res) => {
+const readPostComments: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
     if (!postId) {
@@ -96,11 +96,11 @@ const readPostComments: RequestHandler = async (req, res) => {
     }
     res.status(200).json(JSON.stringify(comments));
   } catch (error) {
-    res.status(500).json({ error: "internal server error" });
+    next(error);
   }
 };
 
-const readPostComment: RequestHandler = async (req, res) => {
+const readPostComment: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
     const commentId = req.params.commentId;
@@ -123,11 +123,11 @@ const readPostComment: RequestHandler = async (req, res) => {
     }
     res.status(200).json(JSON.stringify(comment));
   } catch (error) {
-    res.status(500).json({ error: "internal server error" });
+    next(error);
   }
 };
 
-const createPost: RequestHandler = async (req, res) => {
+const createPost: RequestHandler = async (req, res, next) => {
   try {
     if (!req.user) {
       res.status(401).json({ error: "unauthorized" });
@@ -147,11 +147,11 @@ const createPost: RequestHandler = async (req, res) => {
     });
     res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ error: "internal server error" });
+    next(error);
   }
 };
 
-const updatePost: RequestHandler = async (req, res) => {
+const updatePost: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
     if (!postId || !req.body.title || !req.body.content) {
@@ -169,11 +169,11 @@ const updatePost: RequestHandler = async (req, res) => {
     });
     res.status(204).end();
   } catch (error) {
-    res.status(500).json({ error: "internal server error" });
+    next(error);
   }
 };
 
-const deletePost: RequestHandler = async (req, res) => {
+const deletePost: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
     if (!postId) {
@@ -190,7 +190,7 @@ const deletePost: RequestHandler = async (req, res) => {
     }
     res.status(204).end();
   } catch (error) {
-    res.status(500).json({ error: "internal server error" });
+    next(error);
   }
 };
 

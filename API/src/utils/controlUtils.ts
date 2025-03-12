@@ -1,3 +1,4 @@
+import { ErrorRequestHandler } from "express";
 import { middlewareFactory } from "../../types";
 
 //middleware to parse queries for data
@@ -45,4 +46,9 @@ const parseQueries: middlewareFactory = (fields) => (req, res, next) => {
   }
 };
 
-export default {parseQueries};
+const handleError: ErrorRequestHandler = (err, req, res, next) => {
+    console.error(err);
+    res.status(500).end();
+}
+
+export {parseQueries, handleError};

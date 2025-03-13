@@ -1,6 +1,6 @@
 import { RequestHandler, Request } from "express";
 
-type middlewareFactory = (list: string[]) => RequestHandler;
+type queryParser = (fields: string[]) => RequestHandler;
 
 interface UserPayload {
   id: string

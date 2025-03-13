@@ -7,9 +7,7 @@ const readPosts: RequestHandler = async (req, res, next) => {
       skip: req.body.skip,
       take: req.body.take,
       orderBy: req.body.orderBy,
-      where: {
-        status: "PUBLISHED",
-      },
+      where: req.body.where,
       select: {
         id: true,
         datetime: true,
@@ -22,7 +20,7 @@ const readPosts: RequestHandler = async (req, res, next) => {
         },
       },
     });
-    if (!posts) {
+    if (!posts || posts.length === 0) {
       res.status(404).end();
       return;
     }
@@ -73,6 +71,7 @@ const readPostComments: RequestHandler = async (req, res, next) => {
       skip: req.body.skip,
       take: req.body.take,
       orderBy: req.body.orderBy,
+      //it is only possible to comment on a published post that exists, no filtering is allowed
       where: {
         post_id: postId,
         Post: {

@@ -32,13 +32,14 @@ const readUsers: RequestHandler = async (req, res, next) => {
       skip: req.body.skip,
       take: req.body.take,
       orderBy: req.body.orderBy,
+      where: req.body.where,
       select: {
         id: true,
         username: true,
         datetime: true,
       },
     });
-    if (!users) {
+    if (!users || users.length === 0) {
       res.status(404).end();
       return;
     }
@@ -76,6 +77,15 @@ const updateUser: RequestHandler = async (req, res, next) => {
       return;
     }
 
+    if(!req.user) {
+      res.status(401).end();
+      return;
+    }
+    if(req.user.id !== req.params.userId){
+      res.status(403).end();
+      return;
+    }
+
     const passHash = await bcrypt.hash(req.body.password, 10);
     const user = await prisma.user.update({
       where: {
@@ -100,6 +110,14 @@ const updateUser: RequestHandler = async (req, res, next) => {
 
 const deleteUser: RequestHandler = async (req, res, next) => {
   try {
+    if(!req.user) {
+      res.status(401).end();
+      return;
+    }
+    if(req.user.id !== req.params.userId){
+      res.status(403).end();
+      return;
+    }
     const user = await prisma.user.delete({
       where: {
         id: req.params.userId,

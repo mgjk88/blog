@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { parseQueries, handleError } from "../utils/controlUtils";
 import controller from "../controllers/userController";
+import auth from "../controllers/authController";
 const router = Router();
 
 //create
@@ -16,8 +17,10 @@ router.get(
 router.get("/:userId", controller.readUser, handleError);
 
 //update
-router.put("/:userId", controller.updateUser, handleError);
+//protected route
+router.put("/:userId", auth.authenticate, controller.updateUser, handleError);
 
 //delete
-router.delete("/:userId", controller.deleteUser, handleError);
+//protected route
+router.delete("/:userId", auth.authenticate, controller.deleteUser, handleError);
 export default router;

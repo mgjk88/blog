@@ -29,6 +29,7 @@ const login: RequestHandler = async (req, res, next) => {
     res.status(200).json({token});
 };
 
+//TODO: implement logout function
 const logout: RequestHandler = () => {
 
 }
@@ -42,7 +43,7 @@ const authenticate: RequestHandler = (req, res, next) => {
     const token = authHdr.split(" ")[1];
     const payload = verifyToken(token);
     if(!payload) {
-        res.status(403).end();
+        res.status(401).end();
         return;
     }
     req.user = payload;

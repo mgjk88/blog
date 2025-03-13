@@ -1,8 +1,8 @@
 import "dotenv/config";
 import express from "express";
 
-
 //routers
+import indexRouter from "../src/routes/indexRouter";
 import userRouter from "../src/routes/userRouter";
 import postRouter from "../src/routes/postRouter";
 
@@ -10,7 +10,7 @@ const app = express();
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
-
+app.use('/', indexRouter);
 app.use('/users', userRouter);
 app.use('/posts', postRouter);
 

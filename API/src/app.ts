@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 
 //routers
 import indexRouter from "../src/routes/indexRouter";
@@ -7,7 +8,7 @@ import userRouter from "../src/routes/userRouter";
 import postRouter from "../src/routes/postRouter";
 
 const app = express();
-app.use(express.urlencoded({extended:true}));
+app.use(cors());
 app.use(express.json());
 
 app.use('/', indexRouter);

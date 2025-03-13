@@ -154,12 +154,17 @@ const createPost: RequestHandler = async (req, res, next) => {
 const updatePost: RequestHandler = async (req, res, next) => {
   try {
     const postId = req.params.postId;
+    if(!req.user) {
+      res.status(401).end();
+      return;
+    }
     if (!postId || !req.body.title || !req.body.status || !req.body.content) {
       res.status(400).end();
     }
-    await prisma.post.update({
+    const post = await prisma.post.update({
       where: {
         id: postId,
+        author_id: req.user.id
       },
       data: {
         title: req.body.title,
@@ -168,6 +173,10 @@ const updatePost: RequestHandler = async (req, res, next) => {
         datetime: new Date().toISOString(),
       },
     });
+    if(!post) {
+      res.status(404).end();
+      return;
+    }
     res.status(204).end();
   } catch (error) {
     next(error);
@@ -181,9 +190,14 @@ const deletePost: RequestHandler = async (req, res, next) => {
       res.status(400).end();
       return;
     }
+    if(!req.user){
+      res.status(401).end();
+      return;
+    }
     const post = await prisma.post.delete({
       where: {
         id: postId,
+        author_id: req.user.id
       },
     });
     if (!post) {

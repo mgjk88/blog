@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { parseQueries } from "../utils/controlUtils";
 import controller from "../controllers/postController";
+import auth from "../controllers/authController";
 const router = Router();
 
 //create
 //protected route
-router.post("/", controller.createPost);
+router.post("/", auth.authenticate, controller.createPost);
 
 //read
 router.get(
@@ -23,9 +24,9 @@ router.get("/:postId/comments/:commentId", controller.readPostComment);
 
 //update
 //protected route
-router.put("/:postId", controller.updatePost);
+router.put("/:postId", auth.authenticate, controller.updatePost);
 
 //delete
 //protected route
-router.delete("/:postId", controller.deletePost);
+router.delete("/:postId", auth.authenticate, controller.deletePost);
 export default router;
